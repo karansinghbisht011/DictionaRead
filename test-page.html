@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DictionaRead Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+        
+        .test-section h2 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .instructions {
+            background: #d1ecf1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .dark-theme {
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+        
+        .dark-theme .test-section {
+            border-color: #34495e;
+        }
+        
+        .dark-theme h2 {
+            color: #ecf0f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>📖 DictionaRead Test Page</h1>
+    
+    <div class="instructions">
+        <h3>Testing Instructions:</h3>
+        <ol>
+            <li>Make sure the DictionaRead extension is loaded and enabled</li>
+            <li>Select any word or phrase in the text below</li>
+            <li>Press <strong>Cmd+Shift+L</strong> (Mac) or <strong>Ctrl+Shift+L</strong> (Windows)</li>
+            <li>Test different scenarios listed in each section</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>Basic Word Tests</h2>
+        <p>Select these words to test basic functionality:</p>
+        <ul>
+            <li><span class="highlight">serendipity</span> - A pleasant surprise</li>
+            <li><span class="highlight">ephemeral</span> - Lasting for a very short time</li>
+            <li><span class="highlight">ubiquitous</span> - Present everywhere</li>
+            <li><span class="highlight">mellifluous</span> - Sweet or musical</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Phrase Tests</h2>
+        <p>Select these phrases to test multi-word lookups:</p>
+        <ul>
+            <li><span class="highlight">machine learning</span></li>
+            <li><span class="highlight">artificial intelligence</span></li>
+            <li><span class="highlight">quantum computing</span></li>
+            <li><span class="highlight">blockchain technology</span></li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Edge Case Tests</h2>
+        <p>Test these edge cases:</p>
+        <ul>
+            <li><strong>Single character:</strong> Select just <span class="highlight">a</span></li>
+            <li><strong>Numbers:</strong> Select <span class="highlight">123</span></li>
+            <li><strong>Special characters:</strong> Select <span class="highlight">hello@world.com</span></li>
+            <li><strong>Very long text:</strong> Select this entire paragraph to test the 50-character limit</li>
+            <li><strong>Non-existent word:</strong> Select <span class="highlight">xyzqwerty123</span></li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Academic Text</h2>
+        <p>The <span class="highlight">paradigm</span> shift in <span class="highlight">epistemology</span> has led to a more <span class="highlight">holistic</span> understanding of <span class="highlight">phenomenological</span> research methodologies. This <span class="highlight">epistemological</span> approach emphasizes the <span class="highlight">interconnectedness</span> of various <span class="highlight">methodological</span> frameworks.</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Technical Terms</h2>
+        <p>Modern <span class="highlight">algorithms</span> utilize <span class="highlight">heuristics</span> to optimize <span class="highlight">computational</span> efficiency. The <span class="highlight">asymptotic</span> complexity of these <span class="highlight">algorithms</span> demonstrates <span class="highlight">polynomial</span> time complexity in most practical scenarios.</p>
+    </div>
+    
+    <div class="test-section dark-theme">
+        <h2>Dark Theme Test</h2>
+        <p>This section has a dark background to test the adaptive theming. Select words like <span class="highlight">contrast</span> or <span class="highlight">accessibility</span> to see how the popup adapts to dark backgrounds.</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Long Text Selection</h2>
+        <p>This is a longer paragraph designed to test what happens when you select a large amount of text. The extension should limit the selection to 50 characters to prevent API abuse. Try selecting this entire paragraph to see how it handles long selections. The system should automatically truncate the text and still attempt to look up the first 50 characters of your selection.</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>HTML Entities Test</h2>
+        <p>Test text with HTML entities: <span class="highlight">café</span>, <span class="highlight">naïve</span>, <span class="highlight">résumé</span>. The extension should properly sanitize these before sending to the API.</p>
+    </div>
+    
+    <script>
+        // Add some interactivity for testing
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                console.log('ESC key pressed - popup should close');
+            }
+        });
+        
+        // Log selection changes for debugging
+        document.addEventListener('selectionchange', function() {
+            const selection = window.getSelection();
+            if (selection.toString().trim()) {
+                console.log('Text selected:', selection.toString());
+            }
+        });
+    </script>
+</body>
+</html>

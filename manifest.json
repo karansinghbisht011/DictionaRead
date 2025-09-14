@@ -1,0 +1,46 @@
+{
+  "manifest_version": 3,
+  "name": "DictionaRead",
+  "version": "1.0.0",
+  "description": "Quick dictionary lookup for long-form reading without breaking your flow",
+  
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "commands"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "DictionaRead - Quick Dictionary Lookup"
+  },
+  
+  "commands": {
+    "lookup-word": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Look up selected word or phrase"
+    }
+  },
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
