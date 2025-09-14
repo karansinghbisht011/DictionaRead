@@ -74,9 +74,9 @@ DictionaRead/
 
 1. **Load the extension** in Chrome (see Installation steps)
 2. **Test on various websites**:
-   - News sites (BBC, CNN, etc.)
+   - News sites ([NY Times](https://www.nytimes.com), [The Economist](https://www.economist.com))
    - Academic papers
-   - Blogs and articles
+   - Blogs, Essays and articles ([Aeon](https://aeon.co), [Asterisk Magazine](https://asteriskmag.com), [Substack](https://substack.com))
 3. **Test edge cases**:
    - Very short selections (single characters)
    - Long selections (50+ characters)
@@ -170,7 +170,7 @@ If any step is missing, that's where the problem is!
 
 ## License
 
-This project is open source. Feel free to contribute or modify as needed.
+MIT License
 
 ## Support
 
