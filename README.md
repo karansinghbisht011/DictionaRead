@@ -5,8 +5,8 @@ A Chrome extension for quick dictionary lookup without breaking your reading flo
 ## Features
 
 - **Quick Lookup**: Select any word or phrase and press `Cmd+Shift+L` (Mac) or `Ctrl+Shift+L` (Windows)
-- **Smart Positioning**: Popup appears above your selection without blocking text
-- **Adaptive Theming**: Automatically adjusts to light/dark page themes
+- **Smart Positioning**: Popup intelligently appears above or below your selection to avoid covering the text
+- **Dynamic Contrast**: Automatically calculates optimal colors based on page background brightness
 - **Fallback Support**: If no definition is found, provides a Google search link
 - **Toggle Control**: Enable/disable the extension via the popup panel
 
@@ -30,7 +30,7 @@ A Chrome extension for quick dictionary lookup without breaking your reading flo
 2. **Press the keyboard shortcut**:
    - Mac: `Cmd+Shift+L`
    - Windows/Linux: `Ctrl+Shift+L`
-3. **View the definition** in the popup that appears above your selection
+3. **View the definition** in the popup that appears near your selection (above or below, depending on available space)
 4. **Dismiss the popup** by:
    - Clicking the × button
    - Pressing the ESC key
@@ -42,6 +42,32 @@ Click the DictionaRead icon in your toolbar to:
 - Toggle the extension ON/OFF
 - View usage instructions
 - See the keyboard shortcut for your platform
+
+## Smart Positioning Feature
+
+The extension now features intelligent popup positioning that ensures your selected text remains visible:
+
+- **Automatic Detection**: Calculates available space above and below your selection
+- **Smart Placement**: Chooses the best position (above or below) based on viewport space
+- **No Text Coverage**: The popup never covers the text you're trying to look up
+- **Viewport Awareness**: Adjusts position to stay within the browser window
+- **Smooth Animations**: Different entrance animations for above/below positioning
+
+### Positioning Logic:
+1. **Above First**: Tries to position above the selection if there's enough space
+2. **Below Fallback**: If not enough space above, positions below the selection
+3. **Best Fit**: If neither position has enough space, chooses the side with more room
+4. **Viewport Constraints**: Ensures the popup stays within the browser window
+5. **Tight Spacing**: Uses minimal 5px margin for closer positioning to the selection
+
+### Dynamic Contrast System:
+1. **Brightness Detection**: Analyzes page background color brightness (0-255 scale)
+2. **Smart Color Selection**: 
+   - Very light backgrounds (>200 brightness) → Dark blue-gray popup with white text
+   - Medium backgrounds (128-200 brightness) → Medium dark popup with light text  
+   - Dark backgrounds (<128 brightness) → White popup with dark text
+3. **Real-time Adaptation**: Colors are calculated and applied dynamically for each popup
+4. **Accessibility**: Ensures high contrast ratios for optimal readability
 
 ## Technical Details
 

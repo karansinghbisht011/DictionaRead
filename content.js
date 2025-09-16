@@ -70,7 +70,6 @@ function showLoadingPopup(selectedText) {
   
   // Position and show popup
   positionPopup(currentPopup, currentSelection);
-  document.body.appendChild(currentPopup);
   isPopupVisible = true;
   
   // Add event listeners
@@ -114,7 +113,6 @@ function showDefinitionPopup(selectedText, definition) {
   
   // Position and show popup
   positionPopup(currentPopup, currentSelection);
-  document.body.appendChild(currentPopup);
   isPopupVisible = true;
   
   // Add event listeners
@@ -151,7 +149,6 @@ function showErrorPopup(error, selectedText = '') {
   
   // Position and show popup
   positionPopup(currentPopup, currentSelection);
-  document.body.appendChild(currentPopup);
   isPopupVisible = true;
   
   // Add event listeners
@@ -168,41 +165,121 @@ function createPopupElement() {
   popup.setAttribute('role', 'dialog');
   popup.setAttribute('aria-label', 'Dictionary definition');
   
-  // Detect page theme for adaptive styling
-  const isDarkTheme = detectDarkTheme();
-  if (isDarkTheme) {
-    popup.classList.add('dictionaread-dark');
-  }
+  // Detect page theme and apply dynamic contrast colors
+  const themeInfo = detectThemeAndContrast();
+  applyDynamicStyling(popup, themeInfo);
   
   return popup;
 }
 
 /**
- * Detects if the current page has a dark theme
- * @returns {boolean} True if the page appears to have a dark theme
+ * Applies dynamic styling based on page contrast
+ * @param {HTMLElement} popup - The popup element
+ * @param {Object} themeInfo - Theme information and colors
  */
-function detectDarkTheme() {
+function applyDynamicStyling(popup, themeInfo) {
+  const colors = themeInfo.colors;
+  
+  // Apply dynamic colors via inline styles with !important for maximum compatibility
+  popup.style.setProperty('background-color', colors.background, 'important');
+  popup.style.setProperty('color', colors.text, 'important');
+  popup.style.setProperty('border-color', colors.border, 'important');
+  popup.style.setProperty('box-shadow', `0 4px 12px ${colors.shadow}`, 'important');
+  
+  // Add theme class for CSS-based styling
+  if (themeInfo.isDark) {
+    popup.classList.add('dictionaread-dark');
+  } else {
+    popup.classList.add('dictionaread-light');
+  }
+  
+  // Store theme info for potential use by child elements
+  popup._themeInfo = themeInfo;
+  
+  // Ensure all child elements inherit the text color
+  setTimeout(() => {
+    const allTextElements = popup.querySelectorAll('*');
+    allTextElements.forEach(element => {
+      if (!element.style.color || element.style.color === '') {
+        element.style.setProperty('color', 'inherit', 'important');
+      }
+    });
+  }, 0);
+}
+
+/**
+ * Detects if the current page has a dark theme and calculates optimal contrast colors
+ * @returns {Object} Object containing theme info and optimal colors
+ */
+function detectThemeAndContrast() {
   const bodyStyle = window.getComputedStyle(document.body);
   const backgroundColor = bodyStyle.backgroundColor;
   
   // Parse RGB values
   const rgbMatch = backgroundColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+  let brightness = 255; // Default to light
+  
   if (rgbMatch) {
     const [, r, g, b] = rgbMatch.map(Number);
     // Calculate brightness (0-255)
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness < 128; // Dark if brightness < 128
+    brightness = (r * 299 + g * 587 + b * 114) / 1000;
   }
   
-  // Fallback: check for common dark theme indicators
-  return document.body.classList.contains('dark') || 
-         document.documentElement.classList.contains('dark') ||
-         backgroundColor.includes('rgb(0, 0, 0)') ||
-         backgroundColor.includes('rgb(20, 20, 20)');
+  // Check for common dark theme indicators
+  const isDarkTheme = brightness < 128 || 
+                      document.body.classList.contains('dark') || 
+                      document.documentElement.classList.contains('dark') ||
+                      backgroundColor.includes('rgb(0, 0, 0)') ||
+                      backgroundColor.includes('rgb(20, 20, 20)');
+  
+  // Calculate optimal contrast colors
+  const contrastColors = calculateContrastColors(brightness, isDarkTheme);
+  
+  return {
+    isDark: isDarkTheme,
+    brightness: brightness,
+    colors: contrastColors
+  };
 }
 
 /**
- * Positions the popup above the selected text
+ * Calculates optimal contrast colors based on page brightness
+ * @param {number} brightness - Page brightness (0-255)
+ * @param {boolean} isDark - Whether page is dark themed
+ * @returns {Object} Object containing optimal colors
+ */
+function calculateContrastColors(brightness, isDark) {
+  // For very light backgrounds (brightness > 200)
+  if (brightness > 200) {
+    return {
+      background: '#2c3e50', // Dark blue-gray
+      text: '#ffffff',       // White text
+      border: '#34495e',     // Slightly lighter border
+      shadow: 'rgba(0, 0, 0, 0.3)'
+    };
+  }
+  
+  // For medium-light backgrounds (brightness 128-200)
+  if (brightness > 128) {
+    return {
+      background: '#34495e', // Medium dark
+      text: '#ecf0f1',       // Light gray text
+      border: '#2c3e50',     // Darker border
+      shadow: 'rgba(0, 0, 0, 0.25)'
+    };
+  }
+  
+  // For dark backgrounds (brightness < 128)
+  return {
+    background: '#ffffff',   // White background
+    text: '#2c3e50',         // Dark text
+    border: '#e9ecef',       // Light border
+    shadow: 'rgba(0, 0, 0, 0.15)'
+  };
+}
+
+/**
+ * Positions the popup above or below the selected text to avoid covering it
  * @param {HTMLElement} popup - The popup element
  * @param {Range} selection - The text selection range
  */
@@ -211,26 +288,74 @@ function positionPopup(popup, selection) {
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
   
-  // Position above the selection
-  const top = rect.top + scrollTop - 10; // 10px margin above
-  const left = rect.left + scrollLeft;
+  // First, position the popup temporarily to calculate its dimensions
+  popup.style.visibility = 'hidden';
+  popup.style.top = '0px';
+  popup.style.left = '0px';
+  document.body.appendChild(popup);
   
-  popup.style.top = `${top}px`;
-  popup.style.left = `${left}px`;
-  
-  // Ensure popup stays within viewport
+  // Get popup dimensions after it's rendered
   const popupRect = popup.getBoundingClientRect();
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+  const popupHeight = popupRect.height;
+  const popupWidth = popupRect.width;
   
-  // Adjust horizontal position if needed
-  if (left + popupRect.width > viewportWidth) {
-    popup.style.left = `${viewportWidth - popupRect.width - 10}px`;
+  // Calculate available space above and below the selection
+  const spaceAbove = rect.top;
+  const spaceBelow = window.innerHeight - rect.bottom;
+  const margin = 5; // Reduced margin for tighter positioning
+  
+  // Determine best position: above or below
+  let positionAbove = true;
+  let finalTop, finalLeft;
+  
+  if (spaceAbove >= popupHeight + margin) {
+    // Enough space above - position above the selection
+    positionAbove = true;
+    finalTop = rect.top + scrollTop - popupHeight - margin;
+  } else if (spaceBelow >= popupHeight + margin) {
+    // Not enough space above, but enough below - position below
+    positionAbove = false;
+    finalTop = rect.bottom + scrollTop + margin;
+  } else {
+    // Not enough space in either direction - choose the side with more space
+    if (spaceAbove > spaceBelow) {
+      positionAbove = true;
+      finalTop = Math.max(10, rect.top + scrollTop - popupHeight - margin);
+    } else {
+      positionAbove = false;
+      finalTop = Math.min(
+        window.innerHeight + scrollTop - popupHeight - 10,
+        rect.bottom + scrollTop + margin
+      );
+    }
   }
   
-  // Adjust vertical position if popup would go above viewport
-  if (top < 10) {
-    popup.style.top = `${rect.bottom + scrollTop + 10}px`; // Show below instead
+  // Calculate horizontal position (center on selection, but keep within viewport)
+  finalLeft = rect.left + scrollLeft + (rect.width / 2) - (popupWidth / 2);
+  
+  // Ensure popup stays within viewport horizontally
+  const viewportWidth = window.innerWidth;
+  const minLeft = 10;
+  const maxLeft = viewportWidth - popupWidth - 10;
+  
+  if (finalLeft < minLeft) {
+    finalLeft = minLeft;
+  } else if (finalLeft > maxLeft) {
+    finalLeft = maxLeft;
+  }
+  
+  // Apply final positioning
+  popup.style.top = `${finalTop}px`;
+  popup.style.left = `${finalLeft}px`;
+  popup.style.visibility = 'visible';
+  
+  // Add a class to indicate positioning for potential styling adjustments
+  if (positionAbove) {
+    popup.classList.add('dictionaread-positioned-above');
+    popup.classList.remove('dictionaread-positioned-below');
+  } else {
+    popup.classList.add('dictionaread-positioned-below');
+    popup.classList.remove('dictionaread-positioned-above');
   }
 }
 

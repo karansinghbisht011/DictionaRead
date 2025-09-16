@@ -9,29 +9,45 @@
   z-index: 2147483647; /* Maximum z-index to ensure it appears above everything */
   max-width: 400px;
   min-width: 200px;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  /* Colors will be applied via inline styles for dynamic contrast */
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
   line-height: 1.4;
-  color: #2c3e50;
+  /* color will be set dynamically */
   animation: dictionaread-fadeIn 0.2s ease-out;
+  transition: opacity 0.2s ease-out;
 }
 
-/* Dark theme styles */
+/* Positioning-specific animations */
+.dictionaread-popup.dictionaread-positioned-above {
+  animation: dictionaread-fadeInFromBelow 0.2s ease-out;
+}
+
+.dictionaread-popup.dictionaread-positioned-below {
+  animation: dictionaread-fadeInFromAbove 0.2s ease-out;
+}
+
+/* Light theme styles (for dark backgrounds) */
+.dictionaread-popup.dictionaread-light {
+  /* Colors will be applied via inline styles for dynamic contrast */
+}
+
+/* Dark theme styles (for light backgrounds) */
 .dictionaread-popup.dictionaread-dark {
-  background: #ffffff;
-  border: 1px solid #e9ecef;
-  color: #2c3e50;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  /* Colors will be applied via inline styles for dynamic contrast */
 }
 
 /* Popup content container */
 .dictionaread-popup-content {
   position: relative;
   padding: 16px;
+  color: inherit !important;
+}
+
+/* Ensure all text elements inherit color */
+.dictionaread-popup * {
+  color: inherit !important;
 }
 
 /* Close button (cross icon) */
@@ -43,7 +59,8 @@
   height: 24px;
   border: none;
   background: transparent;
-  color: #6c757d;
+  color: inherit;
+  opacity: 0.7;
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
@@ -56,13 +73,21 @@
 }
 
 .dictionaread-close:hover {
-  background: #e9ecef;
-  color: #495057;
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.dictionaread-popup.dictionaread-dark .dictionaread-close:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .dictionaread-close:focus {
   outline: 2px solid #007bff;
   outline-offset: 2px;
+}
+
+.dictionaread-popup.dictionaread-dark .dictionaread-close:focus {
+  outline: 2px solid #66b3ff;
 }
 
 /* Loading state */
@@ -71,16 +96,22 @@
   align-items: center;
   gap: 12px;
   padding: 8px 0;
-  color: #6c757d;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .dictionaread-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #e9ecef;
-  border-top: 2px solid #007bff;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: dictionaread-spin 1s linear infinite;
+}
+
+.dictionaread-popup.dictionaread-dark .dictionaread-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top: 2px solid currentColor;
 }
 
 /* Definition content */
@@ -92,9 +123,13 @@
   margin: 0 0 12px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #2c3e50;
-  border-bottom: 2px solid #e9ecef;
+  color: inherit;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   padding-bottom: 8px;
+}
+
+.dictionaread-popup.dictionaread-dark .dictionaread-word {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .dictionaread-meaning {
@@ -111,7 +146,8 @@
 
 .dictionaread-part-of-speech {
   font-style: italic;
-  color: #6c757d;
+  color: inherit;
+  opacity: 0.7;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -134,7 +170,8 @@
 }
 
 .dictionaread-definition-number {
-  color: #6c757d;
+  color: inherit;
+  opacity: 0.7;
   font-weight: 500;
   min-width: 16px;
   flex-shrink: 0;
@@ -142,19 +179,24 @@
 
 .dictionaread-definition-text {
   flex: 1;
-  color: #2c3e50;
+  color: inherit;
 }
 
 .dictionaread-separator {
   border: none;
-  border-top: 1px solid #e9ecef;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
   margin: 16px 0;
+}
+
+.dictionaread-popup.dictionaread-dark .dictionaread-separator {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Error state */
 .dictionaread-error {
   padding: 8px 0;
-  color: #6c757d;
+  color: inherit;
+  opacity: 0.8;
 }
 
 .dictionaread-error p {
@@ -163,9 +205,13 @@
 }
 
 .dictionaread-error a {
-  color: #007bff;
+  color: #007bff !important;
   text-decoration: none;
   font-weight: 500;
+}
+
+.dictionaread-popup.dictionaread-dark .dictionaread-error a {
+  color: #66b3ff !important;
 }
 
 .dictionaread-error a:hover {
@@ -178,8 +224,34 @@
   border-radius: 2px;
 }
 
+.dictionaread-popup.dictionaread-dark .dictionaread-error a:focus {
+  outline: 2px solid #66b3ff;
+}
+
 /* Animations */
 @keyframes dictionaread-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dictionaread-fadeInFromBelow {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dictionaread-fadeInFromAbove {
   from {
     opacity: 0;
     transform: translateY(-8px);
