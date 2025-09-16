@@ -43,31 +43,6 @@ Click the DictionaRead icon in your toolbar to:
 - View usage instructions
 - See the keyboard shortcut for your platform
 
-## Smart Positioning Feature
-
-The extension now features intelligent popup positioning that ensures your selected text remains visible:
-
-- **Automatic Detection**: Calculates available space above and below your selection
-- **Smart Placement**: Chooses the best position (above or below) based on viewport space
-- **No Text Coverage**: The popup never covers the text you're trying to look up
-- **Viewport Awareness**: Adjusts position to stay within the browser window
-- **Smooth Animations**: Different entrance animations for above/below positioning
-
-### Positioning Logic:
-1. **Above First**: Tries to position above the selection if there's enough space
-2. **Below Fallback**: If not enough space above, positions below the selection
-3. **Best Fit**: If neither position has enough space, chooses the side with more room
-4. **Viewport Constraints**: Ensures the popup stays within the browser window
-5. **Tight Spacing**: Uses minimal 5px margin for closer positioning to the selection
-
-### Dynamic Contrast System:
-1. **Brightness Detection**: Analyzes page background color brightness (0-255 scale)
-2. **Smart Color Selection**: 
-   - Very light backgrounds (>200 brightness) → Dark blue-gray popup with white text
-   - Medium backgrounds (128-200 brightness) → Medium dark popup with light text  
-   - Dark backgrounds (<128 brightness) → White popup with dark text
-3. **Real-time Adaptation**: Colors are calculated and applied dynamically for each popup
-4. **Accessibility**: Ensures high contrast ratios for optimal readability
 
 ## Technical Details
 
